@@ -3,6 +3,7 @@ from langchain_openai import OpenAI
 from langchain.docstore.document import Document
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chains.summarize import load_summarize_chain
+from langchain.prompts import PromptTemplate
 
 def generate_response(txt):
     llm = OpenAI(
@@ -12,6 +13,17 @@ def generate_response(txt):
     text_splitter = CharacterTextSplitter()
     texts = text_splitter.split_text(txt)
     docs = [Document(page_content=t) for t in texts]
+     prompt_template = """Resumir el siguiente texto en español de manera concisa:
+
+{text}
+
+RESUMEN EN ESPAÑOL:"""
+    
+    prompt = PromptTemplate(
+        template=prompt_template,
+        input_variables=["text"]
+    )
+
     chain = load_summarize_chain(
         llm,
         chain_type="map_reduce"
