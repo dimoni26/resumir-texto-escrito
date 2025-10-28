@@ -13,7 +13,9 @@ def generate_response(txt):
     text_splitter = CharacterTextSplitter()
     texts = text_splitter.split_text(txt)
     docs = [Document(page_content=t) for t in texts]
-     prompt_template = """Resumir el siguiente texto en español de manera concisa:
+    
+    # Prompt personalizado en español
+    prompt_template = """Resumir el siguiente texto en español de manera concisa:
 
 {text}
 
@@ -23,10 +25,12 @@ RESUMEN EN ESPAÑOL:"""
         template=prompt_template,
         input_variables=["text"]
     )
-
+    
     chain = load_summarize_chain(
         llm,
-        chain_type="map_reduce"
+        chain_type="map_reduce",
+        map_prompt=prompt,
+        combine_prompt=prompt
     )
     return chain.run(docs)
 
